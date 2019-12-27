@@ -28,6 +28,7 @@ const (
 	ResultSuccess               Result = C.kSuccess
 	ResultInvalidLibraryVersion Result = C.kInvalidLibraryVersion
 	ResultInvalidArguments      Result = C.kInvalidArguments
+	ResultInternalInconsistency Result = C.kInternalInconsistency
 	ResultEngineNotRunning      Result = -1
 )
 
