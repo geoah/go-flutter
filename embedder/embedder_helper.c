@@ -24,6 +24,10 @@ void proxy_post_task_callback(FlutterTask task, uint64_t target_time_nanos,
 void proxy_desktop_binary_reply(const uint8_t *data, size_t data_size,
                                 void *user_data);
 
+bool runtime_os_darwin();
+
+static size_t gTaskRunnerIdentifiers = 0;
+
 // C helper
 FlutterEngineResult runFlutter(void *user_data, FlutterEngine *engine,
                                FlutterProjectArgs *Args,
@@ -52,12 +56,17 @@ FlutterEngineResult runFlutter(void *user_data, FlutterEngine *engine,
   platform_task_runner.runs_task_on_current_thread_callback =
       proxy_runs_task_on_current_thread_callback;
   platform_task_runner.post_task_callback = proxy_post_task_callback;
+  platform_task_runner.identifier = ++gTaskRunnerIdentifiers;
 
   FlutterCustomTaskRunners custom_task_runners = {};
   custom_task_runners.struct_size = sizeof(FlutterCustomTaskRunners);
   // Render task and platform task are handled by the same TaskRunner
   custom_task_runners.platform_task_runner = &platform_task_runner;
-  custom_task_runners.render_task_runner = &platform_task_runner;
+  // TODO: Use the same platform and render task runners for all paltform
+  // (darwin only for now).  https://github.com/flutter/flutter/issues/48651
+  if (runtime_os_darwin()) {
+    custom_task_runners.render_task_runner = &platform_task_runner;
+  }
   Args->custom_task_runners = &custom_task_runners;
 
   return FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, Args, user_data,

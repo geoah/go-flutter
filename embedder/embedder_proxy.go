@@ -3,6 +3,7 @@ package embedder
 // #include "embedder.h"
 import "C"
 import (
+	"runtime"
 	"unsafe"
 )
 
@@ -99,4 +100,9 @@ func proxy_desktop_binary_reply(data *C.uint8_t, dataSize C.size_t, userData uns
 	callbackPointer := *(*uintptr)(userData)
 	handler := *(*DataCallback)(unsafe.Pointer(callbackPointer))
 	handler(C.GoBytes(unsafe.Pointer(data), C.int(dataSize)))
+}
+
+//export runtime_os_darwin
+func runtime_os_darwin() C.bool {
+	return C.bool(runtime.GOOS == "darwin")
 }
