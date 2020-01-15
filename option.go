@@ -20,11 +20,8 @@ type config struct {
 	windowMode              windowMode
 
 	forcePixelRatio float64
-	keyboardLayout  KeyboardShortcuts
 
 	plugins []Plugin
-
-	sendKeyEventInTextField bool
 }
 
 type windowDimensions struct {
@@ -51,8 +48,7 @@ var defaultApplicationConfig = config{
 		width:  800,
 		height: 600,
 	},
-	keyboardLayout: KeyboardQwertyLayout,
-	windowMode:     WindowModeDefault,
+	windowMode: WindowModeDefault,
 }
 
 // Option for Application
@@ -179,14 +175,6 @@ func AddPlugin(p Plugin) Option {
 	}
 }
 
-// OptionKeyboardLayout allow application to support keyboard that have a
-// different layout and therefore different keyboard shortcuts.
-func OptionKeyboardLayout(keyboardLayout KeyboardShortcuts) Option {
-	return func(c *config) {
-		c.keyboardLayout = keyboardLayout
-	}
-}
-
 // KeyboardShortcuts contains the configuration for keyboard shortcut keys. This
 // allows an application to support keyboard layout different from US layout.
 type KeyboardShortcuts struct {
@@ -217,16 +205,5 @@ func VirtualKeyboardHide(hideCallback func()) Option {
 		// Reference the callback to the platform plugin (singleton) responsible
 		// for textinput.
 		defaultTextinputPlugin.virtualKeyboardHide = hideCallback
-	}
-}
-
-// SendKeyEventInTextField makes go-flutter send keyevent to
-// the flutter framework even when the client is editing text.
-// By setting this to True, both go-flutter and the flutter framework will
-// attempt to paste/move the cursor in the TextField.
-// default false.
-func SendKeyEventInTextField(v bool) Option {
-	return func(c *config) {
-		c.sendKeyEventInTextField = v
 	}
 }
