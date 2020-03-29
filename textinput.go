@@ -161,7 +161,13 @@ func (p *textinputPlugin) glfwKeyCallback(window *glfw.Window, key glfw.Key, sca
 				p.performAction("TextInputAction.done")
 				return
 			} else if p.clientConf.InputType.Name == "TextInputType.multiline" {
-				p.addChar([]rune{'\n'})
+				if keyboardShortcutBind.isShift() {
+					p.addChar([]rune{'\n'})
+				} else {
+					// Indicates that they are done typing in the TextInput
+					p.performAction("TextInputAction.done")
+					return
+				}
 			}
 			p.performTextInputAction()
 
